@@ -9,7 +9,7 @@ by adding `php_serializer` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:php_serializer, "~> 0.1.0"}]
+  [{:php_serializer, "~> 0.9.0"}]
 end
 ```
 
