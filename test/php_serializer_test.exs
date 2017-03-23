@@ -150,4 +150,8 @@ defmodule PhpSerializerTest do
   test "serialize tuple" do
     assert serialize({4,5}) == ~S(a:2:{i:0;i:4;i:1;i:5;})
   end
+
+  test "serialize serializable" do
+    assert serialize(%PhpSerializable{class: "NameOfTheClass", data: "somedata"}) == ~S(C:14:"NameOfTheClass":8:{somedata})
+  end
 end

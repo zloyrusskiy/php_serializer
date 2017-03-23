@@ -7,6 +7,10 @@ defmodule PhpSerializer do
 
   def serialize(false), do: "b:0;"
 
+  def serialize(%PhpSerializable{ class: class, data: data}) do
+    ~s(C:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{data}})
+  end
+
   def serialize(val) when is_integer(val), do: "i:#{val};"
 
   def serialize(val) when is_float(val) do
