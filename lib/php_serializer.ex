@@ -76,6 +76,16 @@ defmodule PhpSerializer do
     { value, rslt_rest }
   end
 
+  defp unserialize_value("C:" <> rest, _opts) do
+    { classname_len, rest2 } = Integer.parse(rest)
+    <<":\"", classname::binary-size(classname_len), "\":", rest3::binary>> = rest2
+    { data_len, rest4 } = Integer.parse(rest3)
+    <<":{", data::binary-size(data_len), "}", rest5::binary>> = rest4
+
+    { %PhpSerializable{class: classname, data: data}, rest5 }
+  end
+
+
   defp unserialize_value("a:" <> rest, opts) do
     { array_size, new_rest } = Integer.parse(rest)
 

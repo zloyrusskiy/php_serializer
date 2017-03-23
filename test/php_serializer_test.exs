@@ -69,6 +69,10 @@ defmodule PhpSerializerTest do
     assert unserialize("N;i:0;") == { :error, "left extra characters: 'i:0;'" }
   end
 
+  test "unserialize serializable object" do
+    assert unserialize(~S(C:3:"obj":23:{s:15:"My private data";})) == { :ok, %PhpSerializable{ class: "obj", data: ~S(s:15:"My private data";)} }
+  end
+
   @tag method: "serialize"
 
   test "serialize null" do
