@@ -73,6 +73,10 @@ defmodule PhpSerializerTest do
     assert unserialize(~S(C:3:"obj":23:{s:15:"My private data";})) == { :ok, %PhpSerializable{ class: "obj", data: ~S(s:15:"My private data";)} }
   end
 
+  test "unserialize serializable object with namespace" do
+    assert unserialize(~S(C:19:"Namespace\Classname":8:{somedata})) == { :ok, %PhpSerializable{ class: "Namespace\\Classname", data: "somedata"} }
+  end
+
   @tag method: "serialize"
 
   test "serialize null" do
