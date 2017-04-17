@@ -1,6 +1,16 @@
 defmodule PhpSerializer do
-  @moduledoc false
+  @doc """
+    Serialize Elixir data
 
+      iex> PhpSerializer.serialize(123)
+      "i:123;"
+
+      iex> PhpSerializer.serialize([1, :some_atom, %{1=> "a", "b" => 2}])
+      "a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}"
+
+      iex> PhpSerializer.serialize(%PhpSerializable{class: "NameOfTheClass", data: "somedata"})
+      "C:14:\"NameOfTheClass\":8:{somedata}"
+  """
   def serialize(nil), do: "N;"
 
   def serialize(true), do: "b:1;"
@@ -48,6 +58,23 @@ defmodule PhpSerializer do
     "a:#{length(rslt)}:{#{inner}}"
   end
 
+  @doc """
+    Unserialize PHP data
+
+      iex> { status, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
+      {:ok, [{0, 1}, {1, "some_atom"}, {2, [{1, "a"}, {"b", 2}]}]}
+      iex> List.keyfind(data, 1, 0)
+      {1, "some_atom"}
+
+    with options:
+
+      iex> { status, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}", array_to_map: true)
+      {:ok, %{0 => 1, 1 => "some_atom", 2 => %{1 => "a", "b" => 2}}}
+
+    bad input:
+      iex> { status, data } = PhpSerializer.unserialize("i:0;i:34;")
+      {:error, "left extra characters: 'i:34;'"}
+  """
   def unserialize(str, opts \\ []) do
     case unserialize_value(str, opts) do
       { rslt, "" } -> { :ok, rslt }
