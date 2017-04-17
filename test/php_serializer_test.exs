@@ -69,6 +69,14 @@ defmodule PhpSerializerTest do
     assert unserialize("N;i:0;") == { :error, "left extra characters: 'i:0;'" }
   end
 
+  test "unserialize serializable object" do
+    assert unserialize(~S(C:3:"obj":23:{s:15:"My private data";})) == { :ok, %PhpSerializable{ class: "obj", data: ~S(s:15:"My private data";)} }
+  end
+
+  test "unserialize serializable object with namespace" do
+    assert unserialize(~S(C:19:"Namespace\Classname":8:{somedata})) == { :ok, %PhpSerializable{ class: "Namespace\\Classname", data: "somedata"} }
+  end
+
   @tag method: "serialize"
 
   test "serialize null" do
@@ -141,5 +149,9 @@ defmodule PhpSerializerTest do
 
   test "serialize tuple" do
     assert serialize({4,5}) == ~S(a:2:{i:0;i:4;i:1;i:5;})
+  end
+
+  test "serialize serializable" do
+    assert serialize(%PhpSerializable{class: "NameOfTheClass", data: "somedata"}) == ~S(C:14:"NameOfTheClass":8:{somedata})
   end
 end
