@@ -80,6 +80,8 @@ defmodule PhpSerializer do
       { rslt, "" } -> { :ok, rslt }
       { _rslt, rest } -> { :error, "left extra characters: '#{rest}'" }
     end
+  rescue
+    _ -> { :error, "can't unserialize that string, got exception" }
   end
 
   defp unserialize_value("N;" <> rest, _opts), do: { nil, rest }
