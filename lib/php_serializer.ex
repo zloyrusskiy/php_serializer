@@ -11,18 +11,19 @@ defmodule PhpSerializer do
       iex> PhpSerializer.serialize(%PhpSerializable{class: "NameOfTheClass", data: "somedata"})
       "C:14:\"NameOfTheClass\":8:{somedata}"
   """
+  require IEx
   def serialize(nil), do: "N;"
 
   def serialize(true), do: "b:1;"
 
   def serialize(false), do: "b:0;"
 
-  def serialize(%PhpSerializable{ class: class, data: data, object: false}) do
+  def serialize(%PhpSerializable.Class{ class: class, data: data}) do
     ~s(C:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{data}})
   end
 
-  def serialize(%PhpSerializable{ class: class, data: data, object: true}) when is_list(data) do
-    ~s(O:#{byte_size(class)}:"#{class}":#{length(data)}:{#{data}})
+  def serialize(%PhpSerializable.Object{ class: class, data: data}) do
+    ~s(O:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{serialize_object(data)}})
   end
 
   def serialize(val) when is_integer(val), do: "i:#{val};"
@@ -60,6 +61,13 @@ defmodule PhpSerializer do
     inner = rslt |> Enum.reverse |> Enum.join("")
 
     "a:#{length(rslt)}:{#{inner}}"
+  end
+
+  defp serialize_object(val) do
+    case Regex.named_captures(~r/^a:\d+:\{(?<inner>.*)/, serialize(val)) do
+      nil -> "#{val}"
+      %{"inner" => x} -> "#{x}"
+    end
   end
 
   @doc """
@@ -119,9 +127,17 @@ defmodule PhpSerializer do
     { data_len, rest4 } = Integer.parse(rest3)
     <<":{", data::binary-size(data_len), "}", rest5::binary>> = rest4
 
-    { %PhpSerializable{class: classname, data: data}, rest5 }
+    { %PhpSerializable.Class{class: classname, data: data}, rest5 }
   end
 
+  defp unserialize_value("O:" <> rest, _opts) do
+    { classname_len, rest2 } = Integer.parse(rest)
+    <<":\"", classname::binary-size(classname_len), "\":", rest3::binary>> = rest2
+    { data_len, rest4 } = Integer.parse(rest3)
+    <<":{", data::binary-size(data_len), "}", rest5::binary>> = rest4
+
+    { %PhpSerializable.Object{class: classname, data: data}, rest5 }
+  end
 
   defp unserialize_value("a:" <> rest, opts) do
     { array_size, new_rest } = Integer.parse(rest)

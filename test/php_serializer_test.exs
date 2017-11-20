@@ -73,11 +73,15 @@ defmodule PhpSerializerTest do
   end
 
   test "unserialize serializable object" do
-    assert unserialize(~S(C:3:"obj":23:{s:15:"My private data";})) == { :ok, %PhpSerializable{ class: "obj", data: ~S(s:15:"My private data";)} }
+    assert unserialize(~S(C:3:"obj":23:{s:15:"My private data";})) == { :ok, %PhpSerializable.Class{ class: "obj", data: ~S(s:15:"My private data";)} }
+  end
+
+  test "unserialize serializable class with namespace" do
+    assert unserialize(~S(C:19:"Namespace\Classname":8:{somedata})) == { :ok, %PhpSerializable.Class{ class: "Namespace\\Classname", data: "somedata"} }
   end
 
   test "unserialize serializable object with namespace" do
-    assert unserialize(~S(C:19:"Namespace\Classname":8:{somedata})) == { :ok, %PhpSerializable{ class: "Namespace\\Classname", data: "somedata"} }
+    assert unserialize(~S(O:14:"NameOfTheClass":7:{{a,s},d}))== { :ok, %PhpSerializable.Object{ class: "NameOfTheClass", data: "{a,s},d"} }
   end
 
   @tag method: "serialize"
@@ -154,7 +158,11 @@ defmodule PhpSerializerTest do
     assert serialize({4,5}) == ~S(a:2:{i:0;i:4;i:1;i:5;})
   end
 
-  test "serialize serializable" do
-    assert serialize(%PhpSerializable{class: "NameOfTheClass", data: "somedata"}) == ~S(C:14:"NameOfTheClass":8:{somedata})
+  test "serialize serializable Class" do
+    assert serialize(%PhpSerializable.Class{class: "NameOfTheClass", data: "somedata"}) == ~S(C:14:"NameOfTheClass":8:{somedata})
+  end
+
+  test "serialize serializable Object" do
+    assert serialize(%PhpSerializable.Object{class: "NameOfTheClass", data: "somedata"}) == ~S(O:14:"NameOfTheClass":8:{somedata})
   end
 end
