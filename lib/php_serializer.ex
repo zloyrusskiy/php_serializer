@@ -17,7 +17,7 @@ defmodule PhpSerializer do
 
   def serialize(false), do: "b:0;"
 
-  def serialize(%PhpSerializable{ class: class, data: data}) do
+  def serialize(%PhpSerializable{ class: class, data: data, object: false}) do
     ~s(C:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{data}})
   end
 
