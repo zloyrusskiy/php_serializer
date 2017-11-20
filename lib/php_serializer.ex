@@ -21,6 +21,10 @@ defmodule PhpSerializer do
     ~s(C:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{data}})
   end
 
+  def serialize(%PhpSerializable.Object{ class: class, data: data, object: true}) when is_map(data) do
+    ~s(O:#{byte_size(class)}:"#{class}":#{length(Map.keys(data))}:{#{data}})
+  end
+
   def serialize(val) when is_integer(val), do: "i:#{val};"
 
   def serialize(val) when is_float(val) do
