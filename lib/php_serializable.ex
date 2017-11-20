@@ -1,5 +1,5 @@
 defmodule PhpSerializable do
   @moduledoc false
 
-  defstruct class: nil, data: nil
+  defstruct class: nil, data: nil, object: nil
 end
