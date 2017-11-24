@@ -132,7 +132,7 @@ defmodule PhpSerializer do
   defp unserialize_value("O:" <> rest, _opts) do
     { classname_len, rest2 } = Integer.parse(rest)
     <<":\"", classname::binary-size(classname_len), "\":", rest3::binary>> = rest2
-    val = unserialize_value("a:"<>rest3<>"}", [])
+    val = unserialize_value("a:"<>rest3, [])
     { %PhpSerializable.Object{class: classname, data: val}, ""}
   end
 
