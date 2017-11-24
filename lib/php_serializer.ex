@@ -126,22 +126,18 @@ defmodule PhpSerializer do
     <<":\"", classname::binary-size(classname_len), "\":", rest3::binary>> = rest2
     { data_len, rest4 } = Integer.parse(rest3)
     <<":{", data::binary-size(data_len), "}", rest5::binary>> = rest4
-
-    { %PhpSerializable.Class{class: classname, data: data}, rest5 }
+    { %PhpSerializable.Class{class: classname, data: data}, rest5}
   end
 
   defp unserialize_value("O:" <> rest, _opts) do
     { classname_len, rest2 } = Integer.parse(rest)
     <<":\"", classname::binary-size(classname_len), "\":", rest3::binary>> = rest2
-    { data_len, rest4 } = Integer.parse(rest3)
-    <<":{", data::binary-size(data_len), "}", rest5::binary>> = rest4
-
-    { %PhpSerializable.Object{class: classname, data: data}, rest5 }
+    val = unserialize_value("a:"<>rest3<>"}", [])
+    { %PhpSerializable.Object{class: classname, data: val}, ""}
   end
 
   defp unserialize_value("a:" <> rest, opts) do
     { array_size, new_rest } = Integer.parse(rest)
-
     unserialize_array(new_rest, array_size, opts)
   end
 
