@@ -23,7 +23,7 @@ defmodule PhpSerializer do
   end
 
   def serialize(%PhpSerializable.Object{ class: class, data: data}) do
-    ~s(O:#{byte_size(class)}:"#{class}":#{byte_size(data)}:{#{serialize_object(data)}})
+    ~s(O:#{byte_size(class)}:"#{class}":#{length(data)}:{#{serialize_object(data)}})
   end
 
   def serialize(val) when is_integer(val), do: "i:#{val};"
