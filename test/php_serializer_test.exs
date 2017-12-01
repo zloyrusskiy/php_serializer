@@ -81,7 +81,7 @@ defmodule PhpSerializerTest do
   end
 
   test "unserialize serializable object with namespace" do
-    assert unserialize(~S(O:14:"NameOfTheClass":2:{s:7:"country";s:2:"ZZ";))== { :ok, %PhpSerializable.Object{ class: "NameOfTheClass", data: "{a,s},d"} }
+    assert unserialize(~S(O:14:"NameOfTheClass":2:{i:0;s:7:"country";i:1;s:2:"ZZ";}})) == {:ok, %PhpSerializable.Object{class: "NameOfTheClass", data: {[{0, "country"}, {1, "ZZ"}], "}"}}}
   end
 
   @tag method: "serialize"
@@ -163,6 +163,6 @@ defmodule PhpSerializerTest do
   end
 
   test "serialize serializable Object" do
-    assert serialize(%PhpSerializable.Object{class: "NameOfTheClass", data: "somedata"}) == ~S(O:14:"NameOfTheClass":8:{somedata})
+    assert serialize(%PhpSerializable.Object{class: "NameOfTheClass", data: ["somedata", 1]}) == ~S(O:14:"NameOfTheClass":2:{i:0;s:8:"somedata";i:1;i:1;}})
   end
 end
