@@ -46,6 +46,5 @@ bad input
 ```
 
 ## Todo
-* PHP Objects support
 * Improve error reporting
 
