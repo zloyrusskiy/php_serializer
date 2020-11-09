@@ -2,15 +2,17 @@ defmodule PhpSerializer.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :php_serializer,
-     version: "1.0.0",
-     elixir: "~> 1.4",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     source_url: "https://github.com/zloyrusskiy/php_serializer",
-     description: description(),
-     package: package(),
-     deps: deps()]
+    [
+      app: :php_serializer,
+      version: "2.0.0",
+      elixir: "~> 1.4",
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      source_url: "https://github.com/zloyrusskiy/php_serializer",
+      description: description(),
+      package: package(),
+      deps: deps()
+    ]
   end
 
   def application do
@@ -29,8 +31,10 @@ defmodule PhpSerializer.Mixfile do
   end
 
   defp package do
-    [maintainers: ["Alexander Fyodorov"],
-     licenses: ["MIT"],
-     links: %{"Github" => "https://github.com/zloyrusskiy/php_serializer"}]
+    [
+      maintainers: ["Alexander Fyodorov"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/zloyrusskiy/php_serializer"}
+    ]
   end
 end
