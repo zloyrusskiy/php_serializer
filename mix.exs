@@ -21,8 +21,8 @@ defmodule PhpSerializer.Mixfile do
 
   defp deps do
     [
-      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 

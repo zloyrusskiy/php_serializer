@@ -11,7 +11,7 @@ defmodule PhpSerializer do
       iex> PhpSerializer.serialize(%PhpSerializable.Class{class: "NameOfTheClass", data: "somedata"})
       "C:14:\"NameOfTheClass\":8:{somedata}"
   """
-  @spec serialize(any) :: binary
+  @spec serialize(any) :: String.t()
   def serialize(nil), do: "N;"
 
   def serialize(true), do: "b:1;"
@@ -106,38 +106,40 @@ defmodule PhpSerializer do
       iex> PhpSerializer.unserialize("i:0;i:34;", strict: true, with_excess: true)
       {:error, "excess characters found", "i:34;"}
   """
-  @spec unserialize(binary, array_to_map: boolean, strict: boolean, with_excess: boolean) ::
-          {:ok, any}
-          | {:ok, any, binary}
-          | {:error, <<_::184>>, binary}
-          | {:error, <<_::184, _::_*168>>}
+  @type error_msg() :: String.t()
+  @type excess_data() :: String.t()
+  @spec unserialize(String.t(), array_to_map: boolean(), strict: boolean(), with_excess: boolean()) ::
+          {:ok, any()}
+          | {:ok, any(), excess_data()}
+          | {:error, error_msg(), excess_data()}
+          | {:error, error_msg()}
   def unserialize(str, opts \\ []) do
     strict = Keyword.get(opts, :strict, false)
     with_excess = Keyword.get(opts, :with_excess, false)
 
     {rslt, rest} = unserialize_value(str, opts)
 
-    cond do
-      not strict and not with_excess ->
+    case {strict, with_excess} do
+      {false, false} ->
         {:ok, rslt}
 
-      not strict and with_excess ->
+      {false, true} ->
         {:ok, rslt, rest}
 
-      strict and not with_excess ->
+      {true, false} ->
         case {rslt, rest} do
           {rslt, ""} -> {:ok, rslt}
           {_rslt, _rest} -> {:error, "excess characters found"}
         end
 
-      strict and with_excess ->
+      {true, true} ->
         case {rslt, rest} do
           {rslt, ""} -> {:ok, rslt, ""}
           {_rslt, rest} -> {:error, "excess characters found", rest}
         end
     end
   rescue
-    _ -> {:error, "can't unserialize that string, got exception"}
+    e -> {:error, "can't unserialize that string, got exception: #{Exception.format(:error, e)}"}
   end
 
   defp unserialize_value("N;" <> rest, _opts), do: {nil, rest}
@@ -185,8 +187,14 @@ defmodule PhpSerializer do
     unserialize_array(new_rest, array_size, opts)
   end
 
+  defp unserialize_value(value, _opts),
+    do: raise("Don't know how to unserialize value: " <> value)
+
   defp unserialize_array(":{" <> rest, array_size, opts),
     do: unserialize_array(rest, array_size, [], opts)
+
+  defp unserialize_array(array_part, _, _),
+    do: raise("Don't know how to unserialize array part: " <> array_part)
 
   defp unserialize_array("}" <> rest, 0, acc, [array_to_map: true] = _opts),
     do: {Enum.reverse(acc) |> Enum.into(%{}), rest}

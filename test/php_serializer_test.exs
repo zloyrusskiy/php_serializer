@@ -68,8 +68,28 @@ defmodule PhpSerializerTest do
              {:ok, %{"a" => 4, "b" => 5, "c" => 6}}
   end
 
-  test "unserialize can catch exception when unserializing bad input" do
-    assert unserialize("dsfgdfgd") == {:error, "can't unserialize that string, got exception"}
+  test "unserialize can catch exception when unserializing bad input (value)" do
+    {status, content} = unserialize("dsfgdfgd")
+    assert(status == :error)
+
+    assert(
+      String.match?(
+        content,
+        ~r/can't unserialize that string, got exception.+how to unserialize value/
+      )
+    )
+  end
+
+  test "unserialize can catch exception when unserializing bad input (array)" do
+    {status, content} = unserialize("a:4:dsfgdfgd")
+    assert(status == :error)
+
+    assert(
+      String.match?(
+        content,
+        ~r/can't unserialize that string, got exception.+how to unserialize array part/
+      )
+    )
   end
 
   test "unserialize serializable object" do
