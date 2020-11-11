@@ -80,30 +80,30 @@ defmodule PhpSerializer do
   @doc ~S"""
     Unserialize PHP data
 
-      iex> { status, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
+      iex> PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
       {:ok, [{0, 1}, {1, "some_atom"}, {2, [{1, "a"}, {"b", 2}]}]}
 
-      iex> { status, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
+      iex> {:ok, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
       iex> List.keyfind(data, 1, 0)
       {1, "some_atom"}
 
     converted to maps:
 
-      iex> { status, data } = PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}", array_to_map: true)
+      iex> PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}", array_to_map: true)
       {:ok, %{0 => 1, 1 => "some_atom", 2 => %{1 => "a", "b" => 2}}}
 
     with excess data:
 
-      iex> { status, data } = PhpSerializer.unserialize("i:0;i:34;")
+      iex> PhpSerializer.unserialize("i:0;i:34;")
       {:ok, 0}
 
-      iex> { status, data, excess } = PhpSerializer.unserialize("i:0;i:34;", with_excess: true)
+      iex> PhpSerializer.unserialize("i:0;i:34;", with_excess: true)
       {:ok, 0, "i:34;"}
 
-      iex> { status, data } = PhpSerializer.unserialize("i:0;i:34;", strict: true)
+      iex> PhpSerializer.unserialize("i:0;i:34;", strict: true)
       {:error, "excess characters found"}
 
-      iex> { status, data, excess } = PhpSerializer.unserialize("i:0;i:34;", strict: true, with_excess: true)
+      iex> PhpSerializer.unserialize("i:0;i:34;", strict: true, with_excess: true)
       {:error, "excess characters found", "i:34;"}
   """
   @spec unserialize(binary, array_to_map: boolean, strict: boolean, with_excess: boolean) ::
