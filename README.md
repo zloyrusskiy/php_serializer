@@ -1,15 +1,22 @@
-
 # PhpSerializer
+
+[![Module Version](https://img.shields.io/hexpm/v/php_serializer.svg)](https://hex.pm/packages/php_serializer)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/php_serializer/)
+[![Total Download](https://img.shields.io/hexpm/dt/php_serializer.svg)](https://hex.pm/packages/php_serializer)
+[![License](https://img.shields.io/hexpm/l/php_serializer.svg)](https://github.com/zloyrusskiy/php_serializer/blob/master/LICENSE.md)
+[![Last Updated](https://img.shields.io/github/last-commit/zloyrusskiy/php_serializer.svg)](https://github.com/zloyrusskiy/php_serializer/commits/master)
 
 PHP serialize/unserialize support for Elixir
 
 ## Installation
 
-The package can be installed by adding `php_serializer` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `:php_serializer` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:php_serializer, "~> 2.0"}]
+  [
+    {:php_serializer, "~> 2.0"}
+  ]
 end
 ```
 
@@ -63,3 +70,10 @@ PhpSerializer.unserialize("i:0;i:34;", strict: true)
 PhpSerializer.unserialize("i:0;i:34;", strict: true, with_excess: true)
 # {:error, "excess characters found", "i:34;"}
 ```
+
+## Copyright and License
+
+Copyright (c) 2017 Alexander Fyodorov <alexandr.v.fedorov@yandex.ru>
+
+This work is free. You can redistribute it and/or modify it under the
+terms of the MIT License. See the [LICENSE.md](./LICENSE.md) file for more details.
