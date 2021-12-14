@@ -1,6 +1,6 @@
 defmodule PhpSerializer do
   @doc ~S"""
-    Serialize Elixir data
+  Serialize Elixir data.
 
       iex> PhpSerializer.serialize(123)
       "i:123;"
@@ -10,6 +10,7 @@ defmodule PhpSerializer do
 
       iex> PhpSerializer.serialize(%PhpSerializable.Class{class: "NameOfTheClass", data: "somedata"})
       "C:14:\"NameOfTheClass\":8:{somedata}"
+
   """
   @spec serialize(any) :: String.t()
   def serialize(nil), do: "N;"
@@ -78,7 +79,7 @@ defmodule PhpSerializer do
   end
 
   @doc ~S"""
-    Unserialize PHP data
+  Unserialize PHP data.
 
       iex> PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}")
       {:ok, [{0, 1}, {1, "some_atom"}, {2, [{1, "a"}, {"b", 2}]}]}
@@ -87,12 +88,12 @@ defmodule PhpSerializer do
       iex> List.keyfind(data, 1, 0)
       {1, "some_atom"}
 
-    converted to maps:
+  Converted to maps:
 
       iex> PhpSerializer.unserialize("a:3:{i:0;i:1;i:1;s:9:\"some_atom\";i:2;a:2:{i:1;s:1:\"a\";s:1:\"b\";i:2;}}", array_to_map: true)
       {:ok, %{0 => 1, 1 => "some_atom", 2 => %{1 => "a", "b" => 2}}}
 
-    with excess data:
+  With excess data:
 
       iex> PhpSerializer.unserialize("i:0;i:34;")
       {:ok, 0}
@@ -105,6 +106,7 @@ defmodule PhpSerializer do
 
       iex> PhpSerializer.unserialize("i:0;i:34;", strict: true, with_excess: true)
       {:error, "excess characters found", "i:34;"}
+
   """
   @type error_msg() :: String.t()
   @type excess_data() :: String.t()

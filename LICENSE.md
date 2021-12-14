@@ -1,3 +1,5 @@
+# The MIt License
+
 Copyright (c) 2017 Alexander Fyodorov <alexandr.v.fedorov@yandex.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
